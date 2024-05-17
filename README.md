@@ -4,6 +4,8 @@
 
 Welcome to the Minecraft Seed Generator project! This is a simple web application hosted on GitHub Pages that allows you to generate unique Minecraft seeds based on input words and preferences.
 
+![MinecraftSeeds](https://github.com/ThatSINEWAVE/MinecraftSeeds/assets/133239148/6b6e1b89-f51a-4ce8-95f2-feb3fb1a0001)
+
 </div>
 
 ## Features
