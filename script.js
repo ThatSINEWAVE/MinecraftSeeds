@@ -22,13 +22,18 @@ if (storedTheme === 'dark') {
     themeToggle.checked = true;
 }
 
-// Update character count
-const updateCharacterCount = () => {
-    const inputValue = wordInput.value.replace(/[^a-zA-Z,\s]/g, '');
+// Update character count and sentence
+const updateCharacterCountAndSentence = () => {
+    const inputValue = wordInput.value;
     const words = inputValue.split(/[,\s]+/).filter(Boolean);
     const validChars = words.join('').length;
     characterCount.textContent = `${validChars}/16`;
     wordInput.value = words.join(', ');
+
+    const seedLength = seedLengthSlider.value;
+    const wordsText = words.length > 0 ? `the word${words.length > 1 ? 's' : ''} "${words.join('", "')}"` : 'nothing but numbers';
+    const sentenceText = `I want a ${seedLength} characters long seed that contains ${wordsText} and a nice cup of randomness.`;
+    sentence.textContent = sentenceText;
 };
 
 // Generate random seed
@@ -49,19 +54,10 @@ const generateSeed = (length, words) => {
     return seed;
 };
 
-// Update sentence
-const updateSentence = () => {
-    const seedLength = seedLengthSlider.value;
-    const words = wordInput.value.replace(/[^a-zA-Z,\s]/g, '').split(/[,\s]+/);
-    const wordsText = words.length > 0 ? `the word${words.length > 1 ? 's' : ''} ${words.join(', ')}` : 'nothing but numbers';
-    const sentenceText = `I want a ${seedLength} characters long seed that contains ${wordsText} and a nice cup of tea.`;
-    sentence.textContent = sentenceText;
-};
-
 // Generate new seed
 const generateNewSeed = () => {
     const seedLength = seedLengthSlider.value;
-    const words = wordInput.value.replace(/[^a-zA-Z,\s]/g, '').split(/[,\s]+/);
+    const words = wordInput.value.split(/[,\s]+/).filter(Boolean);
     const newSeed = generateSeed(seedLength, words);
     lastSeeds.unshift(newSeed);
     lastSeeds = lastSeeds.slice(0, 5);
@@ -100,11 +96,8 @@ const copyAllSeeds = () => {
 };
 
 // Event listeners
-wordInput.addEventListener('input', updateCharacterCount);
-seedLengthSlider.addEventListener('input', () => {
-    seedLengthValue.textContent = seedLengthSlider.value;
-    updateSentence();
-});
+wordInput.addEventListener('input', updateCharacterCountAndSentence);
+seedLengthSlider.addEventListener('input', updateCharacterCountAndSentence);
 generateBtn.addEventListener('click', generateNewSeed);
 copyAllBtn.addEventListener('click', copyAllSeeds);
 themeToggle.addEventListener('change', () => {
@@ -114,5 +107,4 @@ themeToggle.addEventListener('change', () => {
 });
 
 // Initialize
-updateCharacterCount();
-updateSentence();
+updateCharacterCountAndSentence();
