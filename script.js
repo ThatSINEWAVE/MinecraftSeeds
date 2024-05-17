@@ -31,7 +31,7 @@ const updateCharacterCountAndSentence = () => {
     wordInput.value = words.join(', ');
 
     const seedLength = seedLengthSlider.value;
-    const wordsText = words.length > 0 ? `the word${words.length > 1 ? 's' : ''} "${words.join('", "')}"` : 'nothing but numbers';
+    const wordsText = words.length > 0 ? `the word${words.length > 1 ? 's' : ''} "${words.join('", "')}"` : 'nothing but letters, numbers';
     const sentenceText = `I want a ${seedLength} characters long seed that contains ${wordsText} and a nice cup of randomness.`;
     sentence.textContent = sentenceText;
 };
