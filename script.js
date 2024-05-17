@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const lastSeedsContainer = document.querySelector('.last-seeds');
     const seedLengthDisplay = document.getElementById('seed-length-display');
     const customWordDisplay = document.getElementById('custom-word-display');
-    const characterCounter = document.getElementById('character-counter');
 
     // Load and apply saved theme
     const savedTheme = localStorage.getItem('theme');
@@ -33,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     customWordInput.addEventListener('input', () => {
         updateSentence();
-        updateCharacterCounter();
     });
 
     function updateSentence() {
@@ -55,17 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateCharacterCounter() {
-        const customWords = customWordInput.value.trim().split(/\s*,\s*/); // Split by comma with optional spaces
-        let totalCharacters = 0;
-        const filteredWords = customWords.filter(word => {
-            const trimmedWord = word.trim();
-            totalCharacters += trimmedWord.length;
-            return trimmedWord.length > 0;
-        });
-        characterCounter.textContent = 16 - totalCharacters;
-    }
-
     // Generate seed
     generateSeedButton.addEventListener('click', () => {
         const seedLength = parseInt(seedLengthInput.value, 10);
@@ -81,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         addSeedToList(seed);
         updateSentence();
-        updateCharacterCounter();
     });
 
     function generateRandomSeed(length) {
@@ -96,14 +82,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function generateCustomSeed(length, customWords) {
         let result = '';
         const characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let remainingLength = length;
 
         // Generate the seed with random positions for the custom words
         for (let i = 0; i < length; i++) {
             if (Math.random() < 0.5 && customWords.length > 0) {
                 const randomIndex = Math.floor(Math.random() * customWords.length);
                 const randomWord = customWords[randomIndex];
-                if (randomWord.length <= length - result.length) {
+                if (randomWord.length <= remainingLength) {
                     result += randomWord;
+                    remainingLength -= randomWord.length;
                     // Remove the used word from the array to avoid repeating it
                     customWords.splice(randomIndex, 1);
                 } else {
@@ -112,14 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 result += characters.charAt(Math.floor(Math.random() * characters.length));
             }
-        }
-
-        // Trim or pad the generated seed to match the desired length
-        if (result.length > length) {
-            result = result.substring(0, length);
-        } else if (result.length < length) {
-            const padding = characters.charAt(Math.floor(Math.random() * characters.length)).repeat(length - result.length);
-            result += padding;
         }
 
         return result;
