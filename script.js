@@ -1,121 +1,118 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const themeToggle = document.getElementById('theme-toggle');
-    const body = document.body;
-    const seedLengthInput = document.getElementById('seed-length');
-    const customWordInput = document.getElementById('custom-word');
-    const generateSeedButton = document.getElementById('generate-seed');
-    const seedSentence = document.querySelector('.seed-sentence');
-    const seedList = document.getElementById('seed-list');
-    const lastSeedsContainer = document.querySelector('.last-seeds');
-    const seedLengthDisplay = document.getElementById('seed-length-display');
-    const customWordDisplay = document.getElementById('custom-word-display');
+// Get DOM elements
+const themeToggle = document.getElementById('theme-toggle');
+const wordInput = document.getElementById('word-input');
+const characterCount = document.getElementById('character-count');
+const seedLengthSlider = document.getElementById('seed-length');
+const seedLengthValue = document.getElementById('seed-length-value');
+const generateBtn = document.getElementById('generate-btn');
+const lastSeedsContainer = document.getElementById('last-seeds-container');
+const lastSeedsList = document.getElementById('last-seeds-list');
+const copyAllBtn = document.getElementById('copy-all-btn');
+const sentence = document.getElementById('sentence');
 
-    // Load and apply saved theme
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-        body.classList.add(savedTheme);
-        themeToggle.checked = savedTheme === 'theme-dark';
+// Initialize variables
+let lastSeeds = [];
+let darkMode = false;
+
+// Load theme from localStorage
+const storedTheme = localStorage.getItem('theme');
+if (storedTheme === 'dark') {
+    darkMode = true;
+    document.body.classList.add('dark-mode');
+    themeToggle.checked = true;
+}
+
+// Update character count
+const updateCharacterCount = () => {
+    const inputValue = wordInput.value.replace(/[^a-zA-Z,\s]/g, '');
+    const words = inputValue.split(/[,\s]+/).filter(Boolean);
+    const validChars = words.join('').length;
+    characterCount.textContent = `${validChars}/16`;
+    wordInput.value = words.join(', ');
+};
+
+// Generate random seed
+const generateSeed = (length, words) => {
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let seed = '';
+    let wordIndex = 0;
+
+    for (let i = 0; i < length; i++) {
+        if (words.length > 0 && wordIndex < words.length && Math.random() < 0.2) {
+            seed += words[wordIndex];
+            wordIndex++;
+        } else {
+            seed += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
     }
 
-    // Toggle theme
-    themeToggle.addEventListener('change', () => {
-        body.classList.toggle('theme-light');
-        body.classList.toggle('theme-dark');
-        localStorage.setItem('theme', body.classList.contains('theme-dark') ? 'theme-dark' : 'theme-light');
-    });
+    return seed;
+};
 
-    // Update sentence on input change
-    seedLengthInput.addEventListener('input', () => {
-        seedLengthDisplay.textContent = seedLengthInput.value;
-        updateSentence();
-    });
+// Update sentence
+const updateSentence = () => {
+    const seedLength = seedLengthSlider.value;
+    const words = wordInput.value.replace(/[^a-zA-Z,\s]/g, '').split(/[,\s]+/);
+    const wordsText = words.length > 0 ? `the word${words.length > 1 ? 's' : ''} ${words.join(', ')}` : 'nothing but numbers';
+    const sentenceText = `I want a ${seedLength} characters long seed that contains ${wordsText} and a nice cup of tea.`;
+    sentence.textContent = sentenceText;
+};
 
-    customWordInput.addEventListener('input', () => {
-        updateSentence();
-    });
+// Generate new seed
+const generateNewSeed = () => {
+    const seedLength = seedLengthSlider.value;
+    const words = wordInput.value.replace(/[^a-zA-Z,\s]/g, '').split(/[,\s]+/);
+    const newSeed = generateSeed(seedLength, words);
+    lastSeeds.unshift(newSeed);
+    lastSeeds = lastSeeds.slice(0, 5);
+    updateLastSeedsList();
+    lastSeedsContainer.classList.remove('hidden');
+};
 
-    function updateSentence() {
-        const customWords = customWordInput.value.trim().split(/\s*,\s*/); // Split by comma with optional spaces
-        let totalCharacters = 0;
-        const filteredWords = customWords.filter(word => {
-            const trimmedWord = word.trim();
-            totalCharacters += trimmedWord.length;
-            return trimmedWord.length > 0;
+// Update last seeds list
+const updateLastSeedsList = () => {
+    lastSeedsList.innerHTML = '';
+    lastSeeds.forEach(seed => {
+        const seedBox = document.createElement('div');
+        seedBox.className = 'seed-box';
+
+        const seedSpan = document.createElement('span');
+        seedSpan.textContent = seed;
+        seedBox.appendChild(seedSpan);
+
+        const copyBtn = document.createElement('button');
+        copyBtn.textContent = 'Copy';
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(seed);
+            alert(`Seed "${seed}" copied to clipboard!`);
         });
-        const wordsCount = filteredWords.length;
+        seedBox.appendChild(copyBtn);
 
-        if (wordsCount > 0 && totalCharacters <= 16) {
-            customWordDisplay.textContent = wordsCount > 1 ?
-                `the words ${filteredWords.map(word => `"${word}"`).join(', ')}`
-                : `the word "${filteredWords[0]}"`;
-        } else {
-            customWordDisplay.textContent = 'nothing but numbers';
-        }
-    }
-
-    // Generate seed
-    generateSeedButton.addEventListener('click', () => {
-        const seedLength = parseInt(seedLengthInput.value, 10);
-        const customWords = customWordInput.value.trim().split(/\s*,\s*/); // Split by comma with optional spaces
-        const filteredWords = customWords.filter(word => word.trim().length > 0);
-        let seed = '';
-
-        if (filteredWords.length > 0) {
-            seed = generateCustomSeed(seedLength, filteredWords);
-        } else {
-            seed = generateRandomSeed(seedLength);
-        }
-
-        addSeedToList(seed);
-        updateSentence();
+        lastSeedsList.appendChild(seedBox);
     });
+};
 
-    function generateRandomSeed(length) {
-        const characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        let result = '';
-        for (let i = 0; i < length; i++) {
-            result += characters.charAt(Math.floor(Math.random() * characters.length));
-        }
-        return result;
-    }
+// Copy all seeds
+const copyAllSeeds = () => {
+    const seedsText = lastSeeds.join('\n');
+    navigator.clipboard.writeText(seedsText);
+    alert('All seeds copied to clipboard!');
+};
 
-    function generateCustomSeed(length, customWords) {
-        let result = '';
-        const characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        let remainingLength = length;
-
-        // Generate the seed with random positions for the custom words
-        for (let i = 0; i < length; i++) {
-            if (Math.random() < 0.5 && customWords.length > 0) {
-                const randomIndex = Math.floor(Math.random() * customWords.length);
-                const randomWord = customWords[randomIndex];
-                if (randomWord.length <= remainingLength) {
-                    result += randomWord;
-                    remainingLength -= randomWord.length;
-                    // Remove the used word from the array to avoid repeating it
-                    customWords.splice(randomIndex, 1);
-                } else {
-                    result += characters.charAt(Math.floor(Math.random() * characters.length));
-                }
-            } else {
-                result += characters.charAt(Math.floor(Math.random() * characters.length));
-            }
-        }
-
-        return result;
-    }
-
-    function addSeedToList(seed) {
-        const li = document.createElement('li');
-        li.textContent = seed;
-        seedList.prepend(li);
-
-        if (seedList.children.length > 5) {
-            seedList.removeChild(seedList.lastChild);
-        }
-
-        if (!lastSeedsContainer.style.display) {
-            lastSeedsContainer.style.display = 'block';
-        }
-    }
+// Event listeners
+wordInput.addEventListener('input', updateCharacterCount);
+seedLengthSlider.addEventListener('input', () => {
+    seedLengthValue.textContent = seedLengthSlider.value;
+    updateSentence();
 });
+generateBtn.addEventListener('click', generateNewSeed);
+copyAllBtn.addEventListener('click', copyAllSeeds);
+themeToggle.addEventListener('change', () => {
+    darkMode = !darkMode;
+    document.body.classList.toggle('dark-mode');
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+});
+
+// Initialize
+updateCharacterCount();
+updateSentence();
