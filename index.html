@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MinecraftSeeds</title>
@@ -12,52 +11,51 @@
     <link rel="icon" type="image/png" sizes="32x32" href="site-data/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="site-data/favicon-16x16.png">
     <link rel="manifest" href="site-data/site.webmanifest">
-</head>
-
-<body>
-
+  </head>
+  <body>
     <header>
-        <div class="toggle-container">
-            <i class="fas fa-sun"></i>
-            <div class="theme-toggle">
-                <input type="checkbox" id="theme-toggle" class="theme-toggle-input">
-                <label for="theme-toggle" class="theme-toggle-label"></label>
-            </div>
-            <i class="fas fa-moon"></i>
+      <div class="toggle-container">
+        <i class="fas fa-sun"></i>
+        <div class="theme-toggle">
+          <input type="checkbox" id="theme-toggle" class="theme-toggle-input">
+          <label for="theme-toggle" class="theme-toggle-label"></label>
         </div>
+        <i class="fas fa-moon"></i>
+      </div>
     </header>
-
     <main>
-        <div class="container">
-            <h1>Minecraft Seed Generator</h1>
-            <div class="sentence-container">
-                <p id="sentence"></p>
-            </div>
-            <div class="input-container">
-                <input type="text" id="word-input" placeholder="Enter a word (max 16 characters)" maxlength="16" pattern="[a-zA-Z\s]*">
-                <span id="character-count">0/16</span>
-            </div>
-            <div class="slider-container">
-                <label for="seed-length">Seed Length:</label>
-                <input type="range" id="seed-length" min="1" max="32" value="16">
-            </div>
-            <button id="generate-btn">Generate Seed</button>
-            <div id="last-seeds-container" class="hidden">
-                <h2>Last 5 Generated Seeds</h2>
-                <div id="last-seeds-list"></div>
-                <button id="copy-all-btn">Copy the last 5 seeds</button>
-            </div>
+      <div class="container">
+        <h1>Minecraft Seed Generator</h1>
+        <div class="sentence-container">
+          <p id="sentence"></p>
         </div>
+        <div class="input-container">
+          <input type="text" id="word-input" placeholder="Enter a word (max 16 characters)" maxlength="16" pattern="[a-zA-Z\s]*">
+          <span id="character-count">0/16</span>
+        </div>
+        <div class="slider-container">
+          <label for="seed-length">Seed Length:</label>
+          <input type="range" id="seed-length" min="1" max="32" value="16">
+        </div>
+        <button id="generate-btn">Generate Seed</button>
+        <div id="last-seeds-container" class="hidden">
+          <h2>Last 5 Generated Seeds</h2>
+          <div id="last-seeds-list"></div>
+          <button id="copy-all-btn">Copy the last 5 seeds</button>
+        </div>
+      </div>
     </main>
-
     <footer>
-        <a href="https://discord.gg/2nHHHBWNDw" target="_blank"><i class="fab fa-discord"></i></a>
-        <a href="https://ko-fi.com/thatsinewave" target="_blank"><i class="fas fa-heart"></i></a>
-        <a href="https://github.com/ThatSINEWAVE/MinecraftSeeds" target="_blank"><i class="fab fa-github"></i></a>
+      <a href="https://discord.gg/2nHHHBWNDw" target="_blank">
+        <i class="fab fa-discord"></i>
+      </a>
+      <a href="https://ko-fi.com/thatsinewave" target="_blank">
+        <i class="fas fa-heart"></i>
+      </a>
+      <a href="https://github.com/ThatSINEWAVE/MinecraftSeeds" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
     </footer>
-
     <script src="script.js"></script>
-
-</body>
-
+  </body>
 </html>
